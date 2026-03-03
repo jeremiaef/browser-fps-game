@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPS — First Person</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Menu Screen -->
+  <div id="menu-screen" class="screen active">
+    <div class="menu-box">
+      <h1>FIRST<span>PERSON</span></h1>
+      <p class="subtitle">Browser FPS · Phase 2 · Three.js</p>
+      <button id="btn-play">PLAY</button>
+      <div class="controls-hint">
+        <div><span>WASD</span> Move</div>
+        <div><span>MOUSE</span> Look</div>
+        <div><span>LMB</span> Shoot</div>
+        <div><span>R</span> Reload</div>
+        <div><span>1 / 2 / 3</span> Weapons</div>
+        <div><span>ESC</span> Release cursor</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pointer-lock-lost overlay -->
+  <div id="lock-screen" class="screen">
+    <div class="menu-box">
+      <p class="click-resume">CLICK TO RESUME</p>
+    </div>
+  </div>
+
+  <!-- Game Over / Victory Screen -->
+  <div id="gameover-screen" class="screen">
+    <div class="menu-box">
+      <h2 id="go-title">ELIMINATED</h2>
+      <div class="go-stats">
+        <div>SCORE &nbsp;<span id="go-score">0</span></div>
+        <div>KILLS &nbsp;<span id="go-kills">0</span></div>
+        <div>RANK &nbsp;&nbsp;<span id="go-rank">IRON</span></div>
+      </div>
+      <div id="go-rank-badge"></div>
+      <button id="btn-restart">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- Three.js canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <!-- Left: HP -->
+    <div id="hud-left">
+      <div class="hud-label">HP</div>
+      <div id="health-bar-wrap">
+        <div id="health-bar"></div>
+      </div>
+      <div id="health-val">100</div>
+    </div>
+
+    <!-- Centre: Score + Kills -->
+    <div id="hud-center">
+      <div id="hud-score">0</div>
+      <div class="hud-label">SCORE</div>
+      <div id="hud-kills">0 / 6</div>
+      <div class="hud-label" style="font-size:9px;color:#444;margin-top:1px;">KILLS</div>
+    </div>
+
+    <!-- Right: Weapons + Ammo -->
+    <div id="hud-right">
+      <div id="weapon-selector">
+        <div class="weapon-slot active" id="wslot-rifle" data-weapon="rifle">
+          <span class="wslot-key">1</span>
+          <span class="wslot-name">RIFLE</span>
+        </div>
+        <div class="weapon-slot" id="wslot-pistol" data-weapon="pistol">
+          <span class="wslot-key">2</span>
+          <span class="wslot-name">PISTOL</span>
+        </div>
+        <div class="weapon-slot" id="wslot-sniper" data-weapon="sniper">
+          <span class="wslot-key">3</span>
+          <span class="wslot-name">SNIPER</span>
+        </div>
+      </div>
+      <div id="ammo-display">
+        <span id="ammo-cur">30</span>
+        <span class="ammo-sep"> / </span>
+        <span id="ammo-res">90</span>
+      </div>
+      <div class="hud-label">AMMO</div>
+    </div>
+  </div>
+
+  <!-- Crosshair (always centred) -->
+  <div id="crosshair"></div>
+
+  <!-- Reload bar -->
+  <div id="reload-bar-wrap">
+    <div id="reload-bar"><div id="reload-bar-fill"></div></div>
+    <div class="hud-label" style="text-align:center;margin-top:3px;font-size:9px;">RELOADING</div>
+  </div>
+
+  <!-- Kill feed -->
+  <div id="killfeed"></div>
+
+  <!-- Rank badge -->
+  <div id="rank-badge"></div>
+
+  <!-- Bot health bars container (DOM-projected) -->
+  <div id="bot-health-bars"></div>
+
+  <!-- Damage vignette overlays -->
+  <div id="death-vignette"></div>
+  <div id="hit-flash"></div>
+
+  <!-- Scripts (dependency order) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/bot.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0a0f;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  user-select: none;
+  cursor: none;
+}
+
+#game-canvas {
+  display: block;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+/* ── Screens ── */
+.screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 12, 0.92);
+  backdrop-filter: blur(6px);
+}
+.screen.active { display: flex; }
+
+.menu-box {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-box h1 {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: #fff;
+  text-transform: uppercase;
+}
+.menu-box h1 span { color: #ff4655; }
+
+.menu-box h2 {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #ff4655;
+}
+
+.subtitle {
+  color: #888;
+  letter-spacing: 4px;
+  font-size: 13px;
+}
+
+.click-resume {
+  color: #aaa;
+  letter-spacing: 5px;
+  font-size: 18px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+button {
+  background: #ff4655;
+  color: #fff;
+  border: none;
+  padding: 14px 48px;
+  font-size: 18px;
+  font-family: inherit;
+  letter-spacing: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  margin-top: 8px;
+}
+button:hover { background: #ff6472; transform: scale(1.04); }
+button:active { transform: scale(0.97); }
+
+.controls-hint {
+  color: #555;
+  font-size: 12px;
+  letter-spacing: 2px;
+  line-height: 2;
+  margin-top: 8px;
+}
+.controls-hint span {
+  color: #aaa;
+  background: rgba(255,255,255,0.07);
+  padding: 1px 6px;
+  margin-right: 6px;
+  font-size: 11px;
+}
+
+/* Gameover stats */
+.go-stats {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #aaa;
+  line-height: 2.2;
+}
+.go-stats span { color: #fff; font-weight: 700; }
+
+#go-rank-badge {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  margin: 4px 0 8px;
+}
+
+/* ── HUD ── */
+#hud {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #666;
+}
+
+#hud-left { display: flex; align-items: center; gap: 10px; }
+#health-bar-wrap {
+  width: 140px; height: 6px;
+  background: #222;
+  border-radius: 3px;
+  overflow: hidden;
+}
+#health-bar {
+  height: 100%;
+  width: 100%;
+  background: #ff4655;
+  border-radius: 3px;
+  transition: width 0.2s, background 0.3s;
+}
+#health-val { font-size: 18px; font-weight: 700; color: #ff4655; min-width: 36px; }
+
+#hud-center { text-align: center; }
+#hud-score { font-size: 28px; font-weight: 900; letter-spacing: 4px; color: #fff; }
+#hud-kills { font-size: 13px; color: #aaa; letter-spacing: 2px; margin-top: 2px; }
+
+#hud-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+/* Weapon selector */
+#weapon-selector {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+.weapon-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 8px;
+  border: 1px solid #2a2a2a;
+  background: rgba(0,0,0,0.3);
+  min-width: 52px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.weapon-slot.active {
+  border-color: #ff4655;
+  background: rgba(255,70,85,0.12);
+}
+.wslot-key { font-size: 9px; color: #444; letter-spacing: 1px; }
+.wslot-name { font-size: 10px; color: #666; letter-spacing: 2px; }
+.weapon-slot.active .wslot-key  { color: #ff4655; }
+.weapon-slot.active .wslot-name { color: #fff; }
+
+#ammo-display { font-size: 22px; font-weight: 700; line-height: 1; }
+#ammo-cur { color: #fff; }
+.ammo-sep { color: #333; margin: 0 3px; }
+#ammo-res { color: #555; font-size: 15px; }
+
+/* ── Crosshair (always fixed at centre in FPS mode) ── */
+#crosshair {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 20px; height: 20px;
+  pointer-events: none;
+  z-index: 50;
+  transform: translate(-50%, -50%);
+}
+#crosshair::before, #crosshair::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.85);
+}
+#crosshair::before { width: 2px; height: 100%; left: 50%; top: 0; transform: translateX(-50%); }
+#crosshair::after  { width: 100%; height: 2px; top: 50%; left: 0; transform: translateY(-50%); }
+#crosshair.shooting::before,
+#crosshair.shooting::after { background: #ff4655; }
+
+/* ── Reload bar ── */
+#reload-bar-wrap {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  display: none;
+  pointer-events: none;
+  z-index: 20;
+}
+#reload-bar {
+  width: 100%;
+  height: 3px;
+  background: #222;
+  border-radius: 2px;
+  overflow: hidden;
+}
+#reload-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #ff4655;
+  border-radius: 2px;
+  transition: width 0.05s linear;
+}
+
+/* ── Kill Feed ── */
+#killfeed {
+  position: fixed;
+  top: 16px; right: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+.kill-entry {
+  background: rgba(0,0,0,0.6);
+  padding: 4px 10px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-left: 3px solid #ff4655;
+  animation: fadeKill 2.5s forwards;
+}
+@keyframes fadeKill {
+  0%   { opacity: 1; transform: translateX(0); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(20px); }
+}
+
+/* ── Rank Badge ── */
+#rank-badge {
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 20;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border: 1px solid #333;
+  background: rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+
+/* ── Bot health bars (DOM overlay) ── */
+#bot-health-bars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+.bot-health-bar {
+  position: absolute;
+  width: 44px;
+  height: 4px;
+  background: #111;
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+  transform: translate(-50%, 0);
+}
+.bot-health-fill {
+  height: 100%;
+  width: 100%;
+  background: #ff4655;
+  border-radius: 2px;
+  transition: width 0.08s;
+}
+
+/* ── Death vignette ── */
+#death-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(160,0,0,0.75) 100%);
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  display: none;
+}
+
+/* ── Hit flash (player takes damage) ── */
+#hit-flash {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,0,0,0.18);
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0;
+  transition: opacity 0.06s;
+}
